@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <title>Anatomia : le quiz du corps humain</title>
 <style>
 :root{--bg:#eef3f7;--fg:#0e1a24;--mut:#566673;--card:rgba(255,255,255,.78);--line:#c4d0d8;--acc:#0a7ea4;--acc2:#5a4fcf;--accfg:#fff;--ok:#1a8f4e;--ko:#c93b3b;--skin:#f0d5c4;--muscle:#d9776f;--nerve:#b89500;--bone:#5c6b77;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -79,11 +80,60 @@ body::after{content:'';position:fixed;inset:-20%;z-index:-1;pointer-events:none;
 @keyframes ring{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent)}100%{box-shadow:0 0 0 24px transparent}}
 @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* DA v3 : atlas d'anatomie clinique */
+:root:root{--bg:#f3efe6;--fg:#13233a;--mut:#5b6879;--card:#fffdf8;--line:rgba(19,35,58,.14);--tick:rgba(19,35,58,.4);--acc:#0b7a75;--acc2:#1f4e8c;--acc3:#c0392b;--accfg:#fff;--ok:#2a8a57;--ko:#c0392b;--skin:#ecd3bd;--muscle:#b5524c;--nerve:#c99a00;--bone:#6b6f73;color-scheme:light}
+#bg{opacity:.2;filter:none}
+@media (prefers-color-scheme:dark){:root:root:not([data-theme="light"]){--bg:#0a141c;--fg:#e7eef2;--mut:#8fa3b3;--card:#111f29;--line:rgba(231,238,242,.13);--tick:rgba(231,238,242,.35);--acc:#41c7b5;--acc2:#6aa8ff;--acc3:#ff6b64;--accfg:#04201d;--ok:#3fcf8e;--ko:#ff6b64;--skin:#2c4152;--muscle:#9b3f45;--nerve:#e2b93b;--bone:#d9e4ea;color-scheme:dark}#bg{opacity:.32}}
+:root:root[data-theme="dark"]{--bg:#0a141c;--fg:#e7eef2;--mut:#8fa3b3;--card:#111f29;--line:rgba(231,238,242,.13);--tick:rgba(231,238,242,.35);--acc:#41c7b5;--acc2:#6aa8ff;--acc3:#ff6b64;--accfg:#04201d;--ok:#3fcf8e;--ko:#ff6b64;--skin:#2c4152;--muscle:#9b3f45;--nerve:#e2b93b;--bone:#d9e4ea;color-scheme:dark}
+@media (min-width:1100px){#bg{left:80%;height:88%}}
+html{background:var(--bg)}
+body{background:transparent;font-family:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+::selection{background:var(--acc);color:var(--accfg)}
+/* papier millimétré + règle graduée */
+body::before{opacity:1;background-image:linear-gradient(color-mix(in srgb,var(--line) 45%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--line) 45%,transparent) 1px,transparent 1px),linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:8px 8px,8px 8px,40px 40px,40px 40px;-webkit-mask-image:radial-gradient(85% 75% at 50% 35%,#000,transparent);mask-image:radial-gradient(85% 75% at 50% 35%,#000,transparent)}
+body::after{inset:0 auto 0 0;width:7px;animation:none;background:repeating-linear-gradient(180deg,var(--tick) 0 1px,transparent 1px 8px)}
+html::after{content:'';position:fixed;left:0;top:0;bottom:0;width:14px;z-index:-1;pointer-events:none;background:repeating-linear-gradient(180deg,var(--tick) 0 1px,transparent 1px 40px)}
+/* typographie */
+.logo,h1,h2,.score,.gain span,.st b,.big b,.tile b{font-family:Fraunces,Georgia,'Times New Roman',serif}
+.tag,.lv,.pt,.gh em,.lb b,.lb em,.ld em,.ans i,.st small,h3,.top small{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace}
+.logo,h1{background:none;color:var(--fg);-webkit-text-fill-color:currentColor;animation:none;filter:none}
+.logo{font-size:clamp(28px,7vw,40px);letter-spacing:.14em;font-weight:700}
+.bn{fill:var(--acc);filter:none}
+.top{padding:24px 16px 6px}.top small{display:block;margin-top:6px;font-size:11px;letter-spacing:.22em;color:var(--mut)}
+.ecg{display:block;margin:10px auto 0;width:min(260px,70vw);height:30px;overflow:visible}.ecg path{fill:none;stroke-linecap:round;stroke-linejoin:round}.ecg .b{stroke:var(--line);stroke-width:1.5}.ecg .p{stroke:var(--acc3);stroke-width:2.4;stroke-dasharray:.22 1;animation:ecg 2.6s linear infinite}@keyframes ecg{from{stroke-dashoffset:.22}to{stroke-dashoffset:-1}}
+h1{font-size:clamp(24px,6vw,38px);font-weight:700;line-height:1.1;letter-spacing:-.01em;margin:26px 0 12px}
+h2{font-size:clamp(21px,4.8vw,27px);font-weight:700;line-height:1.28}
+h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:10px}h3::after{content:'';flex:1;height:1px;background:var(--line)}
+.score{font-size:84px;color:var(--acc);background:none;filter:none;-webkit-text-fill-color:currentColor}
+/* cartes : fiches cliniques */
+.tile,.ans,.exp,.lb li,button.me,.hi,.st div,.ld li,input,.chip{background:var(--card);border:1px solid var(--line);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 14px 28px -24px rgba(19,35,58,.6)}
+.hi{border-left:4px solid var(--ok)}.hi.ko{border-left-color:var(--ko)}
+.tile{min-height:176px;padding:18px;border-radius:16px;gap:6px}.tile i{font-size:38px;animation:none;filter:none}.tile b{font-size:18px;margin-top:6px}.tile span{font-size:13px}
+.tile:hover{transform:translateY(-4px);box-shadow:0 22px 34px -22px rgba(19,35,58,.7);border-color:var(--acc)}
+.tile.hot{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M38 8h24v30h30v24H62v30H38V62H8V38h30z' fill='%23fff' fill-opacity='.1'/%3E%3C/svg%3E") right -16px bottom -22px/130px no-repeat,linear-gradient(160deg,#12908a,#0a5559);color:#fff;border:0;box-shadow:0 22px 38px -22px #0a5559}
+.tile.hot::after{display:none}
+.big{background:var(--acc);border-radius:12px;padding:17px 20px;box-shadow:none}.big:hover{filter:brightness(1.1);box-shadow:none}.big::before{display:none}
+.chip::before,.ans::before,.tile::before{display:none}
+.ans{border-radius:14px;min-height:60px;font-weight:500}
+.ans i{background:transparent;border:1.5px solid var(--acc);color:var(--acc);border-radius:50%;width:30px;height:30px}
+.ans:hover:not(:disabled){border-color:var(--acc);background:color-mix(in srgb,var(--acc) 8%,var(--card));box-shadow:none}
+.ans.good{box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 25%,transparent)}.ans.good i,.ans.bad i{background:transparent;border-color:#fff;color:#fff}
+/* moniteur de constantes pour le chrono */
+.tm{height:42px;border-radius:10px;background:#08121a;border:1px solid var(--line);box-shadow:none}.tb{opacity:.5;box-shadow:none;background:var(--tc,var(--ok))}.pt{color:#7dffc4;text-shadow:0 0 8px rgba(125,255,196,.5)}.pt b{font-size:19px}
+.lv{border-radius:6px;padding:3px 10px 3px 8px;background:transparent}.lv::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:7px}.l1{color:var(--nerve)}
+.dots s{height:4px;border-radius:2px}.dots s.on{background:var(--acc);box-shadow:none}.dots s.cur{background:var(--acc3)}
+/* planche anatomique */
+.exp{position:relative;padding:26px 18px 18px;border-radius:14px}.exp::before{content:'FIG.';position:absolute;top:9px;left:16px;font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.2em;color:var(--mut)}
+.o.on{fill:var(--acc3);stroke:var(--acc3);filter:none}
+.lb li{border-radius:12px}.lb li:nth-child(1){border-color:var(--line);box-shadow:inset 4px 0 0 #d4a017}.lb li:nth-child(2){border-color:var(--line);box-shadow:inset 4px 0 0 #9aa7b4}.lb li:nth-child(3){border-color:var(--line);box-shadow:inset 4px 0 0 #b9763f}
+.av{background:hsl(var(--h) 42% 40%)}.xl .av{box-shadow:0 0 0 4px var(--bg),0 0 0 6px var(--acc)}
+.fl{filter:none}.rb{height:6px}.rb div{background:var(--acc);animation:none}
+.cf{border-radius:50%}
 </style>
 </head>
 <body>
 <svg id="bg" viewBox="0 0 200 410" aria-hidden="true"></svg>
-<header class='top' onclick='home()'><div class='logo'>ANATOM<svg class='bn' viewBox='0 0 20 60' role='img' aria-label='I'><circle cx='6' cy='6' r='5'/><circle cx='14' cy='6' r='5'/><circle cx='6' cy='54' r='5'/><circle cx='14' cy='54' r='5'/><rect x='7' y='6' width='6' height='48'/></svg>A</div><small>le quiz du corps humain</small></header>
+<header class='top' onclick='home()'><div class='logo'>ANATOM<svg class='bn' viewBox='0 0 20 60' role='img' aria-label='I'><circle cx='6' cy='6' r='5'/><circle cx='14' cy='6' r='5'/><circle cx='6' cy='54' r='5'/><circle cx='14' cy='54' r='5'/><rect x='7' y='6' width='6' height='48'/></svg>A</div><svg class='ecg' viewBox='0 0 300 40' aria-hidden='true'><path class='b' d='M0 24H52L58 24L62 18L66 24H74L78 28L84 4L90 38L95 24H108L114 20L122 24H170L176 24L180 18L184 24H192L196 28L202 4L208 38L213 24H226L232 20L240 24H300'/><path class='p' pathLength='1' d='M0 24H52L58 24L62 18L66 24H74L78 28L84 4L90 38L95 24H108L114 20L122 24H170L176 24L180 18L184 24H192L196 28L202 4L208 38L213 24H226L232 20L240 24H300'/></svg><small>le quiz du corps humain</small></header>
 <main id="app"></main>
 <script>
 const Q=[
@@ -157,6 +207,43 @@ const Q=[
 [1,'Quels sont les deux os de l’avant-bras ?',['Le radius et le cubitus','Le tibia et le péroné','L’humérus et l’omoplate','Le fémur et la rotule'],'humerus','Le radius, côté pouce, et le cubitus, côté auriculaire, forment l’avant-bras. Ils se croisent quand on tourne la paume vers le bas.','Avant-bras'],
 [1,'Combien de paires de côtes possède l’être humain ?',['12','7','10','24'],'ribs','Nous avons 12 paires de côtes, soit 24 au total : 7 « vraies » reliées au sternum, 3 « fausses » reliées indirectement et 2 « flottantes » libres à l’avant.','Côte_(anatomie)'],
 [2,'Quel os de la hanche résulte de la fusion de l’ilion, de l’ischion et du pubis ?',['L’os coxal','Le sacrum','Le coccyx','L’astragale'],'pelvis','L’os coxal est formé par la fusion de trois os : l’ilion, l’ischion et le pubis. Les deux os coxaux, avec le sacrum et le coccyx, forment le bassin.','Os_coxal'],
+[0,'Combien de litres de sang un adulte possède-t-il environ ?',['Environ 5 litres','Environ 1 litre','Environ 12 litres','Environ 20 litres'],'heart','Un adulte possède environ 4,5 à 5,5 litres de sang, soit à peu près 7 % de son poids. Le cœur le fait circuler en permanence dans un immense réseau de vaisseaux.','Sang'],
+[0,'Quel organe, en forme de poche musculaire, brasse les aliments avec un liquide très acide ?',['L’estomac','Le cœur','Le foie','La vessie'],'stomach','L’estomac est une poche musculaire extensible qui mélange les aliments avec le suc gastrique, très acide. Il peut contenir environ 1,5 litre.','Estomac'],
+[0,'Combien de dents possède un adulte, dents de sagesse comprises ?',['32','20','28','36'],'skull','Un adulte a 32 dents : 8 incisives, 4 canines, 8 prémolaires et 12 molaires, dont les 4 dents de sagesse. Les enfants ont 20 dents de lait.','Dent'],
+[0,'Quel organe réchauffe, humidifie et filtre l’air avant qu’il n’arrive aux poumons ?',['Le nez','Le foie','L’oreille','La vessie'],'nose','Les poils et le mucus du nez piègent poussières et microbes, tandis que l’air est réchauffé et humidifié avant les poumons. Le nez abrite aussi l’odorat.','Nez'],
+[0,'Quel liquide produit la peau pour se refroidir ?',['La sueur','La bile','La salive','Le sang'],'skin','La sueur, composée surtout d’eau et de sels, s’évapore sur la peau et la refroidit : c’est le principal moyen du corps pour réguler sa température en cas de chaleur ou d’effort.','Sueur'],
+[0,'Quelle partie du squelette protège la moelle épinière ?',['La colonne vertébrale','Le sternum','Les côtes','Le bassin'],'spine','La colonne vertébrale compte 33 vertèbres empilées, séparées par des disques souples. Elle soutient le corps et abrite la moelle épinière dans son canal.','Colonne_vertébrale'],
+[0,'Combien de sens principaux distingue-t-on classiquement ?',['Cinq','Trois','Sept','Dix'],'brain','On distingue classiquement cinq sens : la vue, l’ouïe, l’odorat, le goût et le toucher. La science en décrit d’autres, comme l’équilibre ou la perception de la position du corps.','Sens_(biologie)'],
+[0,'Quel gaz les cellules utilisent-elles pour produire de l’énergie ?',['L’oxygène','L’azote','L’hélium','Le méthane'],'lungs','Dans les mitochondries, les cellules utilisent l’oxygène pour « brûler » le glucose et produire de l’énergie sous forme d’ATP. C’est pourquoi nous devons respirer en permanence.','Respiration_cellulaire'],
+[0,'Quel est le seul os mobile du crâne, celui du menton ?',['La mandibule','Le maxillaire','Le sternum','L’occipital'],'skull','La mandibule est le seul os mobile du crâne : elle permet de mâcher et de parler, et porte les dents du bas.','Mandibule'],
+[0,'Quel muscle ne se repose jamais et se contracte sans que nous y pensions ?',['Le cœur','Le biceps','Le quadriceps','Le deltoïde'],'heart','Le myocarde est un muscle strié involontaire : il fonctionne nuit et jour, sous le contrôle du système nerveux autonome et de son propre « pacemaker ».','Myocarde'],
+[0,'Quelle est la température normale du corps humain ?',['Environ 37 °C','Environ 30 °C','Environ 42 °C','Environ 25 °C'],'brain','La température centrale normale est d’environ 37 °C. L’hypothalamus, dans le cerveau, agit comme un thermostat : frissons pour se réchauffer, sueur pour se refroidir.','Thermorégulation'],
+[0,'Quel organe est relié au cerveau par le nerf optique ?',['L’œil','L’oreille','Le nez','La langue'],'eye','Le nerf optique transmet les signaux de la rétine vers le cerveau, qui construit l’image. Chaque nerf optique contient plus d’un million de fibres nerveuses.','Nerf_optique'],
+[1,'Combien d’os compte une main, poignet compris ?',['27','10','54','5'],'humerus','Chaque main compte 27 os : 8 au poignet (carpe), 5 dans la paume (métacarpe) et 14 dans les doigts (phalanges). Les deux mains regroupent plus d’un quart des os du squelette.','Main'],
+[1,'Quelle valve sépare l’oreillette gauche du ventricule gauche ?',['La valve mitrale','La valve tricuspide','La valve aortique','La valve pulmonaire'],'heart','La valve mitrale, à deux feuillets, empêche le sang de refluer du ventricule vers l’oreillette gauche. La valve tricuspide, à trois feuillets, joue le même rôle à droite.','Valve_mitrale'],
+[1,'Quel est le rôle des plaquettes sanguines ?',['Participer à la coagulation','Transporter l’oxygène','Produire des anticorps','Digérer les graisses'],'heart','Les plaquettes s’agglutinent sur une plaie pour former un bouchon et déclenchent la coagulation. Un adulte en possède environ 150 000 à 400 000 par microlitre de sang.','Plaquette_sanguine'],
+[1,'Quelle protéine donne sa solidité à la peau, aux tendons et aux os ?',['Le collagène','L’insuline','L’hémoglobine','La kératine'],'skin','Le collagène est la protéine la plus abondante du corps. Il forme des fibres résistantes dans le derme, les tendons, les cartilages et les os. La kératine, elle, compose les cheveux et les ongles.','Collagène'],
+[1,'Quel os protège l’avant du genou ?',['La rotule','Le péroné','L’astragale','Le sacrum'],'tibia','La rotule est un os sésamoïde, enchâssé dans le tendon du quadriceps. Elle protège l’articulation du genou et augmente la force d’extension de la jambe.','Rotule'],
+[1,'Quel liquide amortit et protège le cerveau dans le crâne ?',['Le liquide cérébrospinal','La lymphe','La bile','Le plasma'],'brain','Le liquide cérébrospinal baigne le cerveau et la moelle épinière. Il amortit les chocs, apporte des nutriments et évacue des déchets : environ 500 mL sont produits par jour pour un volume d’environ 150 mL.','Liquide_cérébrospinal'],
+[1,'Quelle partie de l’oreille contient les canaux semi-circulaires, essentiels à l’équilibre ?',['L’oreille interne','L’oreille externe','Le tympan','Le pavillon'],'ear','Les trois canaux semi-circulaires contiennent un liquide qui bouge quand la tête tourne, informant le cerveau de la position et du mouvement. Une atteinte provoque des vertiges.','Oreille_interne'],
+[1,'Quelles cellules de la rétine fonctionnent surtout dans la pénombre ?',['Les bâtonnets','Les cônes','Les neurones moteurs','Les cellules de Schwann'],'eye','Les bâtonnets, environ 120 millions par œil, sont très sensibles à la faible lumière mais ne distinguent pas les couleurs. C’est pourquoi on voit « en gris » la nuit.','Rétine'],
+[1,'Quel type de muscle obéit à notre volonté ?',['Le muscle strié squelettique','Le muscle lisse','Le myocarde','Le muscle de l’intestin'],'biceps','Les muscles striés squelettiques, comme le biceps, obéissent à notre volonté. Le muscle lisse (intestin, vaisseaux) et le myocarde sont, eux, involontaires.','Muscle_squelettique'],
+[1,'Quelle hormone, libérée par les glandes surrénales, prépare le corps au stress ou à l’effort ?',['L’adrénaline','L’insuline','La mélatonine','L’œstrogène'],'kidney','Les glandes surrénales, posées sur les reins, libèrent l’adrénaline : le cœur accélère, les bronches se dilatent et le glucose est mobilisé pour une réaction de « combat ou fuite ».','Adrénaline'],
+[1,'Qu’est-ce qu’un chromosome ?',['Une structure qui porte l’ADN','Une hormone','Un type de globule','Un os microscopique'],'dna','Un chromosome est une longue molécule d’ADN enroulée autour de protéines. Chaque cellule humaine possède 23 paires de chromosomes, dont une paire sexuelle.','Chromosome'],
+[1,'Qui a proposé en 1953, avec Francis Crick, le modèle de la double hélice de l’ADN ?',['James Watson','Louis Pasteur','Charles Darwin','Marie Curie'],'dna','En 1953, James Watson et Francis Crick proposent le modèle de la double hélice, en s’appuyant notamment sur les images de diffraction de rayons X de Rosalind Franklin.','ADN'],
+[1,'Combien de paires de nerfs crâniens possède l’être humain ?',['12','8','31','24'],'brain','Nous avons 12 paires de nerfs crâniens (olfactif, optique, vague…), qui relient directement le cerveau à la tête, au cou et à certains organes. Les 31 paires de nerfs spinaux partent, elles, de la moelle épinière.','Nerf_crânien'],
+[2,'Quel vaisseau amène au foie le sang riche en nutriments venant de l’intestin ?',['La veine porte','La veine cave inférieure','L’artère hépatique','L’aorte abdominale'],'liver','La veine porte conduit au foie le sang venant de l’intestin, de l’estomac et de la rate, pour que les nutriments soient traités et les toxines filtrées avant d’atteindre la circulation générale.','Veine_porte'],
+[2,'Quel système hormonal, impliquant le rein, régule la pression artérielle ?',['Le système rénine-angiotensine-aldostérone','Le système thyroïdien','L’axe insuline-glucagon','Le système lymphatique'],'kidney','Quand la pression baisse, le rein libère de la rénine, ce qui active l’angiotensine II (vasoconstriction) et l’aldostérone (rétention de sodium et d’eau) : la pression remonte.','Système_rénine-angiotensine-aldostérone'],
+[2,'Quel lobe cérébral abrite l’aire de Broca, liée à la production du langage ?',['Le lobe frontal','Le lobe occipital','Le lobe pariétal','Le cervelet'],'brain','L’aire de Broca, dans le lobe frontal (le plus souvent à gauche), organise la production de la parole. Une lésion cause une aphasie de Broca : la personne comprend mais parle avec difficulté.','Aire_de_Broca'],
+[2,'Quelle région de la rétine contient la plus forte densité de cônes ?',['La fovéa','La papille optique','La sclère','Le cristallin'],'eye','La fovéa, au centre de la macula, contient presque uniquement des cônes et assure la vision précise des détails. La papille optique, où sort le nerf optique, est au contraire la « tache aveugle ».','Fovéa'],
+[2,'Quel ion entre massivement dans le neurone lors de la dépolarisation d’un potentiel d’action ?',['Le sodium (Na⁺)','Le potassium (K⁺)','Le calcium (Ca²⁺)','Le chlorure (Cl⁻)'],'brain','L’ouverture des canaux sodiques voltage-dépendants fait entrer du Na⁺ : le neurone se dépolarise. La repolarisation vient ensuite de la sortie de K⁺.','Potentiel_d%27action'],
+[2,'Quel os du crâne abrite la selle turcique, où repose l’hypophyse ?',['Le sphénoïde','L’ethmoïde','Le temporal','L’occipital'],'skull','Le sphénoïde, os en forme de papillon situé à la base du crâne, creuse la selle turcique qui loge l’hypophyse, glande qui pilote de nombreuses hormones.','Os_sphénoïde'],
+[2,'Quel muscle profond relie les lombaires au fémur et fléchit la hanche ?',['Le psoas iliaque','Le grand fessier','Le sartorius','Le soléaire'],'pelvis','Le psoas iliaque relie la colonne lombaire et l’os iliaque au petit trochanter du fémur. Il fléchit la hanche, par exemple pour lever la jambe en marchant.','Muscle_psoas'],
+[2,'Quelle vitamine est indispensable à la fabrication de facteurs de coagulation par le foie ?',['La vitamine K','La vitamine C','La vitamine A','La vitamine B9'],'liver','La vitamine K permet au foie de fabriquer plusieurs facteurs de coagulation (II, VII, IX, X). Un déficit augmente le risque de saignements ; elle est aussi produite en partie par le microbiote intestinal.','Vitamine_K'],
+[2,'Comment s’appelle l’unité contractile de base d’une fibre musculaire ?',['Le sarcomère','La mitochondrie','Le neurone moteur','L’alvéole'],'biceps','Le sarcomère, délimité par deux stries Z, contient des filaments d’actine et de myosine qui glissent les uns sur les autres : c’est le mécanisme de la contraction musculaire.','Sarcomère'],
+[2,'Dans quelle partie de l’intestin la vitamine B12 est-elle principalement absorbée ?',['L’iléon','Le duodénum','Le côlon','L’œsophage'],'intestine','La vitamine B12, liée au facteur intrinsèque sécrété par l’estomac, est absorbée dans l’iléon terminal. Sans ce facteur, on développe une anémie pernicieuse.','Iléon'],
+[2,'Quel est le principal système tampon qui maintient le pH du sang autour de 7,4 ?',['Le couple CO₂ et bicarbonate','Le sodium seul','Le glucose','L’urée'],'lungs','Le couple CO₂/bicarbonate (HCO₃⁻) est le principal tampon du sang. Les poumons règlent le CO₂ et les reins les bicarbonates, ce qui maintient le pH entre 7,35 et 7,45.','Équilibre_acido-basique'],
+[2,'Quelles cellules fabriquent les anticorps dans l’organisme ?',['Les plasmocytes (dérivés des lymphocytes B)','Les lymphocytes T tueurs','Les macrophages','Les globules rouges'],'heart','Après la rencontre avec un antigène, les lymphocytes B se différencient en plasmocytes, de véritables usines à anticorps. Les lymphocytes T, eux, détruisent les cellules infectées ou coordonnent la réponse.','Plasmocyte'],
 ];
 const RK=[['Novice',0,'🌱'],['Étudiant',3000,'📚'],['Biologiste',10000,'🔬'],['Infirmier',25000,'🩺'],['Docteur',50000,'💉'],['Médecin',100000,'⚕️'],['Neurochirurgien',200000,'🧠']];
 const rkOf=t=>{let i=0;RK.forEach((r,j)=>{if(t>=r[1])i=j});return i};
@@ -222,8 +309,8 @@ const draw=()=>{if(!M.deck.length)M.deck=shuf(Q);return M.deck.pop()};
 function sk(){const s=st.get("streak");return s&&(s.last==today()||s.last==ymd(new Date(Date.now()-864e5)))?s.n:0}
 function home(){clearInterval(cd);clearInterval(qt);cyc();const d=st.get("d_"+today()),n=sk();
 app.innerHTML=`<button class='me' onclick='profile()'>${av(ME.name)}<div><b>${esc(ME.name)}</b><small>${RK[rkOf(tot())][2]} ${RK[rkOf(tot())][0]}</small>${rkBar(tot())}</div><span class='sk${n?'':' off'}'><i class='fl'>🔥</i>${n}</span></button>
-<h1 class='ctr'>Comprends ton corps, une question à la fois.</h1><p class='mut ctr'>Plus tu réponds vite, plus tu gagnes de points. Du collège à la licence.</p>
-<div class="tiles"><button class="tile hot" onclick="daily()"><i>⚡</i><b>Quiz du jour</b><span>${d?`Terminé : ${d.s} points`:"5 questions, nouvelles à minuit"}</span></button><button class="tile" onclick="free()"><i>🎲</i><b>Partie libre</b><span>5 questions aléatoires, rejouable à volonté</span></button></div>
+<h1 class='ctr'>Connais-tu vraiment ton corps ?</h1><p class='mut ctr'>Plus tu réponds vite, plus tu gagnes de points. Du collège à la licence.</p>
+<div class="tiles"><button class="tile hot" onclick="daily()"><i>🩺</i><b>Quiz du jour</b><span>${d?`Terminé : ${d.s} points`:"5 questions, nouvelles à minuit"}</span></button><button class="tile" onclick="free()"><i>🔬</i><b>Partie libre</b><span>5 questions aléatoires, rejouable à volonté</span></button></div>
 <div class='chips'><button class='chip' onclick='profile()'>👤 Mon profil</button><button class='chip' onclick='hist()'>🕘 Historique</button></div><h3>Classement du jour</h3><ol class='lb' id='lb'></ol>`;lb()}
 function daily(){const k=today(),d=st.get("d_"+k);if(d)return result(d);const r=rng(hash(k)),p=[0,1,2].map(l=>shuf(Q.filter(q=>q[0]==l),r));
 M={g:Date.now(),mode:"d",list:Array.from({length:5},()=>p[Math.floor(r()*3)].pop()),i:0,s:0};show()}
@@ -231,7 +318,7 @@ function free(){M={g:Date.now(),mode:"f",deck:[],n:0,s:0};M.q=draw();show()}
 function show(){clearInterval(tm);clearInterval(cd);clearInterval(qt);const q=cur();setStage(M.mode=="d"?Math.min(3,M.i):M.n%4);
 M.a=shuf(q[2].map((t,j)=>[t,j==0]));
 app.innerHTML=`<div class="bar"><button class="lnk" onclick="home()">← Accueil</button><span class="tag" style="margin:0">${M.mode=="d"?`Question ${M.i+1} sur 5`:`Partie libre, question ${M.n+1} sur 5`} | Score : ${M.s}</span></div>
-<span class="lv l${q[0]}">${LV[q[0]]} (jusqu’à ${MAX[q[0]]} pts)</span><div class="tm" id="tm"><div class="tb" id="tb"></div><div class="pt"><b id="pt">${MAX[q[0]]}</b> pts</div></div><h2>${q[1]}</h2>
+${dots()}<span class="lv l${q[0]}">${LV[q[0]]} (jusqu’à ${MAX[q[0]]} pts)</span><div class="tm" id="tm"><div class="tb" id="tb"></div><div class="pt"><b id="pt">${MAX[q[0]]}</b> pts</div></div><h2>${q[1]}</h2>
 <div class="col" id="ans">${M.a.map((x,j)=>`<button class="ans" onclick="pick(${j})"><i>${"ABCD"[j]}</i>${x[0]}</button>`).join("")}</div><div id="ex"></div>`;scrollTo(0,0);
 M.t0=performance.now();qt=setInterval(()=>{const l=q[0],p=pts(l,(performance.now()-M.t0)/1e3),r=p/MAX[l];$("#pt").textContent=p;$("#tb").style.transform=`scaleX(${r})`;$("#tb").style.setProperty("--tc",`hsl(${r*120} 70% 45%)`)},100)}
 function cnt(el,to){const t0=performance.now(),f=n=>{const k=Math.min(1,(n-t0)/900);el.textContent="+"+Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
@@ -251,7 +338,7 @@ app.innerHTML=`<p class="tag">Quiz du jour terminé</p><p class="score">${d.s}<s
 <p>${RK[rkOf(tot())][2]} ${RK[rkOf(tot())][0]} : ${tot()} points au total</p><p class="mut">Prochain quiz dans <b id="cd" style="font-variant-numeric:tabular-nums"></b></p>
 <h3>Classement du jour</h3><ol class="lb" id="lb"></ol>
 <div class="col" style="margin-top:22px"><button class="big" onclick="free()"><b>Partie libre</b><span>Continue à t’entraîner</span></button><button class="big alt" onclick="home()"><b>Retour à l’accueil</b></button></div>`;
-tick();cd=setInterval(tick,1000);lb()}
+tick();cd=setInterval(tick,1000);lb();setTimeout(()=>{const e=$('.score');if(e)boom(e)},350)}
 Object.assign(NAME,{skin:'Peau',bladder:'Vessie',thyroid:'Thyroïde'});
 function profile(){clearInterval(tm);clearInterval(qt);setStage(1);const t=tot(),i=rkOf(t),n=sk();
 app.innerHTML=`<div class='bar'><button class='lnk' onclick='home()'>← Accueil</button></div>
@@ -278,7 +365,7 @@ const enc=()=>btoa(unescape(encodeURIComponent(JSON.stringify({me:ME,tot:tot(),b
 function copyCode(){const e=$('#cd2');e.select();try{navigator.clipboard.writeText(e.value)}catch(x){document.execCommand('copy')}$('#msg').textContent='Code copié ✓'}
 function restore(){try{const o=JSON.parse(decodeURIComponent(escape(atob($('#cd2').value.trim()))));if(!o.me||!o.me.name)throw 0;ME={name:String(o.me.name).slice(0,16)};st.set('me',ME);st.set('tot',+o.tot||0);st.set('best',+o.best||0);st.set('nd',+o.nd||0);if(o.streak)st.set('streak',o.streak);sync();profile();$('#msg').textContent='Profil restauré ✓'}catch(e){$('#msg').textContent='Code invalide.'}}
 async function sync(extra){if(sb&&cloud==1){try{await sb.from('profiles').update({total:tot(),best:st.get('best')||0,nd:st.get('nd')||0,streak:sk(),last_day:(st.get('streak')||{}).last||null}).eq('id',SBU.id);if(extra&&extra.day)await sb.from('daily_scores').insert({user_id:SBU.id,day:extra.day,pts:extra.pts})}catch(e){}}if(!db)return;try{const r=db.collection('scores').doc(uid),s=await r.get(),o=s.exists?s.data():{};await r.set({...o,name:ME.name,total:Math.max(o.total||0,tot()),best:Math.max(o.best||0,st.get('best')||0),nd:Math.max(o.nd||0,st.get('nd')||0),streak:st.get('streak')||o.streak||null,...extra})}catch(e){}}
-function boom(el){const r=el.getBoundingClientRect();for(let i=0;i<28;i++){const p=document.createElement('i'),a=Math.random()*6.28,d=60+Math.random()*130;p.className='cf';p.style.cssText=`left:${r.left+r.width/2}px;top:${r.top+r.height/2}px;--x:${Math.cos(a)*d}px;--y:${Math.sin(a)*d-40}px;background:hsl(${Math.random()*360} 90% 60%)`;document.body.appendChild(p);setTimeout(()=>p.remove(),1100)}}
+function boom(el){const r=el.getBoundingClientRect();for(let i=0;i<28;i++){const p=document.createElement('i'),a=Math.random()*6.28,d=60+Math.random()*130;p.className='cf';p.style.cssText=`left:${r.left+r.width/2}px;top:${r.top+r.height/2}px;--x:${Math.cos(a)*d}px;--y:${Math.sin(a)*d-40}px;background:${['#41c7b5','#ff6b64','#e2b93b','#6aa8ff','#ffffff'][i%5]}`;document.body.appendChild(p);setTimeout(()=>p.remove(),1100)}}
 
 /* Compte Google + données en ligne (Supabase) */
 const prof=v=>({id:SBU.id,username:v,total:tot(),best:st.get('best')||0,nd:st.get('nd')||0,streak:sk(),last_day:(st.get('streak')||{}).last||null});
@@ -296,7 +383,7 @@ const logout=async()=>{await sb.auth.signOut();SBU=null;cloud=0;profile()};
 /* Langue de l’interface : français, ou anglais pour les autres langues */
 const EN=!/^fr/i.test(navigator.language||'fr');
 if(EN){const DT=`le quiz du corps humain|the human body quiz
-Comprends ton corps, une question à la fois.|Understand your body, one question at a time.
+Connais-tu vraiment ton corps ?|Do you really know your body?
 Plus tu réponds vite, plus tu gagnes de points. Du collège à la licence.|The faster you answer, the more points you earn. From middle school to university.
 Quiz du jour|Daily quiz
 Partie libre|Free play
@@ -379,6 +466,8 @@ const RR=[[/^Terminé : (\d+) points$/,'Completed: $1 points'],[/^(Question \d+)
 document.documentElement.lang='en';document.title='Anatomia: the human body quiz';
 const tr=n=>{if(n.nodeType==3){const s=n.nodeValue,k=s.trim();if(!k)return;let v=D[k];if(v===undefined&&k.length<80){v=k;for(const[r,x]of RR)v=v.replace(r,x)}if(v&&v!==k)n.nodeValue=s.replace(k,()=>v)}else n.childNodes.forEach(tr)};
 new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(tr))).observe(document.body,{childList:true,subtree:true});tr(document.body)}
+const dots=()=>{const c=M.mode=='d'?M.i:M.n;return `<div class='dots'>${[0,1,2,3,4].map(i=>`<s class='${i<c?'on':i==c?'cur':''}'></s>`).join('')}</div>`};
+document.addEventListener('pointermove',e=>{const t=e.target.closest&&e.target.closest('.tile,.ans,.chip,.big');if(t){const r=t.getBoundingClientRect();t.style.setProperty('--px',e.clientX-r.left+'px');t.style.setProperty('--py',e.clientY-r.top+'px')}});
 initSB();
 home();
 </script>
