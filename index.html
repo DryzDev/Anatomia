@@ -65,6 +65,15 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset
 .ld{list-style:none;padding:0;margin:0;display:grid;gap:6px}.ld li{display:flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);opacity:.55}.ld li.on{opacity:1}.ld li.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}.ld em{margin-left:auto;font:600 13px ui-monospace,Menlo,monospace;font-style:normal;color:var(--mut)}
 input{width:100%;box-sizing:border-box;padding:12px 14px;margin:6px 0 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);font:inherit}
 .hi{padding:12px 14px;margin:0 0 8px;border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:12px;background:var(--card)}.hi.ko{border-left-color:var(--ko)}.hi p{margin:4px 0 0;font-size:14px;color:var(--mut)}.hi em{font-style:normal;color:var(--acc)}.lb small{display:block;color:var(--mut);font-size:11px}.lb em small{display:inline}.zm{margin:12px 0 4px;text-align:center}.zm svg{width:100%;max-width:260px;height:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}.zm figcaption{font-size:12px;color:var(--mut);margin-top:4px}
+body::after{content:'';position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(40% 40% at 20% 20%,color-mix(in srgb,var(--acc) 28%,transparent),transparent 70%),radial-gradient(35% 35% at 80% 30%,color-mix(in srgb,var(--acc2) 26%,transparent),transparent 70%),radial-gradient(40% 40% at 60% 85%,color-mix(in srgb,var(--ok) 16%,transparent),transparent 70%);animation:au 18s ease-in-out infinite alternate}@keyframes au{to{transform:translate(4%,3%) rotate(6deg) scale(1.08)}}
+.logo,h1{background-size:220% 100%;animation:sh 6s linear infinite}@keyframes sh{to{background-position:220% 0}}
+.tile.hot{position:relative;overflow:hidden;box-shadow:0 10px 40px -12px var(--acc2)}.tile.hot::after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-120%);animation:gl 3.6s ease-in-out infinite}@keyframes gl{60%,100%{transform:translateX(120%)}}
+.tile i{animation:fy 3s ease-in-out infinite alternate}@keyframes fy{to{transform:translateY(-6px) scale(1.08)}}
+#app>*{animation:fi .6s cubic-bezier(.2,.8,.2,1) both}@keyframes fi{from{opacity:0;transform:translateY(16px) scale(.985)}}
+.ans{animation:fi .5s both}.ans:nth-child(2){animation-delay:.07s}.ans:nth-child(3){animation-delay:.14s}.ans:nth-child(4){animation-delay:.21s}
+.tb{box-shadow:0 0 18px var(--tc,var(--ok))}.rb div{background-size:200% 100%;animation:sh 3s linear infinite}
+.cf{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9;animation:cf 1s ease-out forwards}@keyframes cf{to{transform:translate(var(--x),var(--y)) rotate(540deg);opacity:0}}
+.gh{display:flex;align-items:baseline;gap:8px;margin:26px 0 10px;padding-top:12px;border-top:2px dashed var(--acc)}.gh b{color:var(--acc)}.gh span{color:var(--mut);font-size:13px;margin-right:auto}.gh em{font:700 16px ui-monospace,Menlo,monospace;font-style:normal}
 @keyframes up{from{opacity:0;transform:translateY(14px)}}
 @keyframes p{50%{opacity:.5}}
 @keyframes ring{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent)}100%{box-shadow:0 0 0 24px transparent}}
@@ -170,10 +179,11 @@ const pts=(l,t)=>Math.max(Math.round(MAX[l]*.1),Math.round(MAX[l]*(1-t/T)));
 
 /* Compte automatique : pseudo aléatoire gardé sur l’appareil */
 const ADJ=["Vif","Zen","Malin","Agile","Rusé","Brillant","Curieux","Rapide"],NOM=["Neurone","Cortex","Synapse","Aorte","Néphron","Alvéole","Globule","Fémur"],rd=a=>a[Math.floor(Math.random()*a.length)];
-let ME=st.get("me");if(!ME){ME={name:rd(NOM)+rd(ADJ)+(10+Math.floor(Math.random()*90))};st.set("me",ME)}
+let ME=st.get("me");const hadMe=!!ME;try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}if(!ME){ME={name:rd(NOM)+rd(ADJ)+(10+Math.floor(Math.random()*90))};st.set("me",ME)}
 const av=n=>`<span class="av" style="--h:${Math.abs(hash(n))%360}">${esc(n.slice(0,2).toUpperCase())}</span>`;
-let db=null,uid=null,ready=0;
-(async()=>{try{if(window.claude){const[d,u]=await Promise.all([claude.use("db"),claude.use("user")]);uid=u?await u.id():null;db=uid?d:null}}catch(e){db=null}ready=1;lb()})();
+const SB_URL='',SB_KEY='';/* ← À REMPLIR : URL et clé « anon » de ton projet Supabase (voir le guide) */
+let db=null,uid=null,ready=0,sb=null,SBU=null,cloud=0;
+(async()=>{try{if(window.claude){const[d,u]=await Promise.all([claude.use("db"),claude.use("user")]);uid=u?await u.id():null;db=uid?d:null}}catch(e){db=null}ready=1;if(db)try{const r=await db.collection('scores').doc(uid).get();if(r.exists){const o=r.data();let c=0;if(!hadMe&&o.name){ME.name=o.name;st.set('me',ME);c=1}if((o.total||0)>tot()){st.set('tot',o.total);c=1}if((o.best||0)>(st.get('best')||0))st.set('best',o.best);if((o.nd||0)>(st.get('nd')||0))st.set('nd',o.nd);if(o.streak&&!st.get('streak'))st.set('streak',o.streak);if(c&&$('.tiles'))home()}}catch(e){}lb()})();
 
 /* Fond : un corps humain qui se décompose */
 const mir=(id,c)=>`<g id="${id}">${c}</g><use href="#${id}" transform="translate(200 0) scale(-1 1)"/>`;
@@ -198,12 +208,13 @@ const diagram=z=>`<svg viewBox="26 8 148 400" class="dg" role="img" aria-label="
 
 /* Classement du jour */
 async function lb(){const el=$("#lb");if(!el)return;const k=today(),d=st.get("d_"+k);let R=[];
+if(sb)try{const{data}=await sb.from('daily_scores').select('pts,user_id,profiles(username,total)').eq('day',k).order('pts',{ascending:false}).limit(50);R=(data||[]).map(x=>({name:x.profiles.username,pts:x.pts,total:x.profiles.total,id:x.user_id}))}catch(e){}
 if(db)try{R=(await db.collection("scores").get()).docs.map(x=>({...x.data(),id:x.id})).filter(x=>x&&x.day==k&&x.name)}catch(e){}
-R=R.filter(x=>x.id!=uid);if(d)R.push({name:ME.name,pts:d.s,me:1,total:tot()});R.sort((a,b)=>b.pts-a.pts);
+R=R.filter(x=>x.id!=uid&&x.id!=(SBU&&SBU.id));if(d)R.push({name:ME.name,pts:d.s,me:1,total:tot()});R.sort((a,b)=>b.pts-a.pts);
 const rk=R.map((x,i)=>({...x,i})),mine=rk.find(x=>x.me);
 const row=x=>`<li class="${x.me?"me":""}" style="animation-delay:${x.i*70}ms"><b>${x.i+1}</b>${av(x.name)}<span>${esc(x.name)}${x.me?" (toi)":""}<small>${RK[rkOf(x.total||0)][2]} ${RK[rkOf(x.total||0)][0]}</small></span><em>${x.pts}<small> pts</small></em></li>`;
-el.innerHTML=rk.slice(0,8).map(row).join("")+(mine&&mine.i>7?`<li class="gap">…</li>${row(mine)}`:"")+(d?"":`<li class="me ghost"><b>–</b>${av(ME.name)}<span>${esc(ME.name)} (toi)</span><em>à jouer</em></li>`)+(ready&&!db?`<li class="gap mut" style="font-size:13px">Classement partagé indisponible ici : seul ton score est affiché.</li>`:"")}
-async function save(d){if(!db)return;try{const r=db.collection("scores").doc(uid),s=await r.get(),o=s.exists?s.data():{};await r.set({name:ME.name,day:today(),pts:d.s,total:(o.total||0)+d.s})}catch(e){}}
+el.innerHTML=rk.slice(0,8).map(row).join("")+(mine&&mine.i>7?`<li class="gap">…</li>${row(mine)}`:"")+(d?"":`<li class="me ghost"><b>–</b>${av(ME.name)}<span>${esc(ME.name)} (toi)</span><em>à jouer</em></li>`)+(ready&&!db&&!sb?`<li class="gap mut" style="font-size:13px">Classement partagé indisponible ici : seul ton score est affiché.</li>`:"")}
+async function save(d){return sync({day:today(),pts:d.s})}
 
 /* Écrans */
 const cur=()=>M.mode=="d"?M.list[M.i]:M.q;
@@ -215,8 +226,8 @@ app.innerHTML=`<button class='me' onclick='profile()'>${av(ME.name)}<div><b>${es
 <div class="tiles"><button class="tile hot" onclick="daily()"><i>⚡</i><b>Quiz du jour</b><span>${d?`Terminé : ${d.s} points`:"5 questions, nouvelles à minuit"}</span></button><button class="tile" onclick="free()"><i>🎲</i><b>Partie libre</b><span>5 questions aléatoires, rejouable à volonté</span></button></div>
 <div class='chips'><button class='chip' onclick='profile()'>👤 Mon profil</button><button class='chip' onclick='hist()'>🕘 Historique</button></div><h3>Classement du jour</h3><ol class='lb' id='lb'></ol>`;lb()}
 function daily(){const k=today(),d=st.get("d_"+k);if(d)return result(d);const r=rng(hash(k)),p=[0,1,2].map(l=>shuf(Q.filter(q=>q[0]==l),r));
-M={mode:"d",list:Array.from({length:5},()=>p[Math.floor(r()*3)].pop()),i:0,s:0};show()}
-function free(){M={mode:"f",deck:[],n:0,s:0};M.q=draw();show()}
+M={g:Date.now(),mode:"d",list:Array.from({length:5},()=>p[Math.floor(r()*3)].pop()),i:0,s:0};show()}
+function free(){M={g:Date.now(),mode:"f",deck:[],n:0,s:0};M.q=draw();show()}
 function show(){clearInterval(tm);clearInterval(cd);clearInterval(qt);const q=cur();setStage(M.mode=="d"?Math.min(3,M.i):M.n%4);
 M.a=shuf(q[2].map((t,j)=>[t,j==0]));
 app.innerHTML=`<div class="bar"><button class="lnk" onclick="home()">← Accueil</button><span class="tag" style="margin:0">${M.mode=="d"?`Question ${M.i+1} sur 5`:`Partie libre, question ${M.n+1} sur 5`} | Score : ${M.s}</span></div>
@@ -225,8 +236,8 @@ app.innerHTML=`<div class="bar"><button class="lnk" onclick="home()">← Accueil
 M.t0=performance.now();qt=setInterval(()=>{const l=q[0],p=pts(l,(performance.now()-M.t0)/1e3),r=p/MAX[l];$("#pt").textContent=p;$("#tb").style.transform=`scaleX(${r})`;$("#tb").style.setProperty("--tc",`hsl(${r*120} 70% 45%)`)},100)}
 function cnt(el,to){const t0=performance.now(),f=n=>{const k=Math.min(1,(n-t0)/900);el.textContent="+"+Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
 function pick(j){clearInterval(qt);const q=cur(),ok=M.a[j][1],p=pts(q[0],(performance.now()-M.t0)/1e3),c=M.a.findIndex(x=>x[1]),A=[...document.querySelectorAll(".ans")],last=(M.mode=="d"&&M.i==4)||(M.mode=="f"&&M.n==4);
-A.forEach(b=>b.disabled=true);if(ok)M.s+=p;hs({m:M.mode,q:Q.indexOf(q),a:M.a[j][0],ok:!!ok,p:ok?p:0});
-const fin=()=>{A.forEach((b,i)=>{b.classList.remove("bad");b.classList.add(i==c?"good":"out")});$("#tm").classList.add("off");
+A.forEach(b=>b.disabled=true);if(ok)M.s+=p;hs({g:M.g,m:M.mode,q:Q.indexOf(q),a:M.a[j][0],ok:!!ok,p:ok?p:0});
+const fin=()=>{A.forEach((b,i)=>{b.classList.remove("bad");b.classList.add(i==c?"good":"out")});$("#tm").classList.add("off");if(ok)boom(A[c]);
 setTimeout(()=>{$("#ex").innerHTML=`<div class="rv"><div class="gain${ok?"":" zero"}"><span id="gn">+0</span><b>${ok?"points, bien joué !":"point : la bonne réponse est ci-dessus"}</b></div>
 <div class="exp">${diagram2(q[3])}<div><p class="tag">Zone du corps : ${NAME[q[3]]}</p><p>${q[4]}</p>${zoom(q[3])}<a class="src" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/${q[5]}">Source : Wikipédia, ${decodeURIComponent(q[5]).replace(/_/g," ")} ↗</a></div></div>
 <button class="big" onclick="nxt()"><b>${last?"Voir mon résultat":"Question suivante"}</b></button></div>`;cnt($("#gn"),ok?p:0);$("#ex").scrollIntoView({behavior:"smooth",block:"nearest"})},450)};
@@ -248,11 +259,12 @@ app.innerHTML=`<div class='bar'><button class='lnk' onclick='home()'>← Accueil
 <div class='st'><div><b>${t}</b><small>points cumulés</small></div><div><b>${st.get('nd')||0}</b><small>quiz du jour</small></div><div><b>${st.get('best')||0}</b><small>meilleur score</small></div></div>
 <div class='ctr'><span class='sk${n?'':' off'}'><i class='fl'>🔥</i>${n} jour${n>1?'s':''} d’affilée</span></div>
 <h3>Changer de pseudo</h3><input id='nm' maxlength='16' value='${esc(ME.name)}' aria-label='Pseudo'><button class='big' onclick='saveName()'><b>Enregistrer</b></button><p id='msg' class='mut ctr' style='margin-top:8px'></p>
+${acct()}<h3>Sauvegarde du profil</h3><p class='mut' style='font-size:13px'>Ton pseudo, ton rang et ta série sont gardés dans ce navigateur. Pour les retrouver sur un autre appareil ou après un nettoyage, copie ce code. Pour restaurer, colle un code dans la case puis appuie sur Restaurer.</p><input id='cd2' value='${esc(enc())}' aria-label='Code de sauvegarde'><div class='chips' style='margin:0 0 6px'><button class='chip' onclick='copyCode()'>Copier le code</button><button class='chip' onclick='restore()'>Restaurer depuis un code</button></div>
 <h3>Les rangs</h3><ul class='ld'>${RK.map((r,j)=>`<li class='${t>=r[1]?'on':''}${j==i?' cur':''}'><span>${r[2]}</span><b>${r[0]}</b><em>${r[1]} pts</em></li>`).join('')}</ul>
 <div class='chips'><button class='chip' onclick='hist()'>🕘 Voir mon historique</button></div>`;scrollTo(0,0)}
-async function saveName(){const v=$('#nm').value.trim().replace(/\s+/g,' ');if(v.length<3){$('#msg').textContent='Le pseudo doit faire au moins 3 caractères.';return}ME.name=v;st.set('me',ME);$('#msg').textContent='Pseudo enregistré ✓';$('.xl').innerHTML=av(v);if(db)try{await db.collection('scores').doc(uid).update({name:v})}catch(e){}}
-function hist(){clearInterval(tm);clearInterval(qt);setStage(2);const h=(st.get('h')||[]).slice().reverse();let last='';
-app.innerHTML=`<div class='bar'><button class='lnk' onclick='profile()'>← Profil</button><span class='tag' style='margin:0'>Historique</span></div>`+(h.length?h.slice(0,150).map(e=>{const q=Q[e.q];if(!q)return '';const hd=e.d!=last?(last=e.d,`<h3>${e.d.split('-').reverse().join('/')}</h3>`):'';return hd+`<div class='hi ${e.ok?'ok':'ko'}'><b>${q[1]}</b><p>Ta réponse : ${esc(e.a)} ${e.ok?'✓':'✗'}</p>${e.ok?'':`<p>Bonne réponse : ${q[2][0]}</p>`}<p><em>${e.m=='d'?'Quiz du jour':'Partie libre'}, ${e.p} pts</em></p></div>`}).join(''):`<p class='mut ctr'>Aucune partie pour l’instant : réponds à une question pour la voir ici.</p>`);scrollTo(0,0)}
+async function saveName(){const v=$('#nm').value.trim().replace(/\s+/g,' ');if(v.length<3){$('#msg').textContent='Le pseudo doit faire au moins 3 caractères.';return}if(sb&&SBU){const{error}=await(cloud==1?sb.from('profiles').update({username:v}).eq('id',SBU.id):sb.from('profiles').insert(prof(v)));if(error){$('#msg').textContent=error.code=='23505'?'Ce pseudo est déjà pris.':'Erreur : '+error.message;return}cloud=1}ME.name=v;st.set('me',ME);const ok=(st.get('me')||{}).name==v;$('#msg').textContent=ok?'Pseudo enregistré ✓':'Sauvegarde impossible : ton navigateur bloque le stockage (navigation privée ?). Copie ton code de sauvegarde ci-dessous.';$('.xl').innerHTML=av(v);sync()}
+function hist(){clearInterval(tm);clearInterval(qt);setStage(2);const h=(st.get('h')||[]).slice().reverse();let last='';const GS={};h.forEach(e=>{const k=e.g||e.d+e.m;GS[k]=(GS[k]||0)+e.p});
+app.innerHTML=`<div class='bar'><button class='lnk' onclick='profile()'>← Profil</button><span class='tag' style='margin:0'>Historique</span></div>`+(h.length?h.slice(0,150).map(e=>{const q=Q[e.q];if(!q)return '';const key=e.g||e.d+e.m,hd=key!=last?(last=key,`<div class='gh'><b>${e.m=='d'?'Quiz du jour':'Partie libre'}</b><span>${e.d.split('-').reverse().join('/')}${e.g?' · '+new Date(e.g).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</span><em>${GS[key]} pts</em></div>`):'';return hd+`<div class='hi ${e.ok?'ok':'ko'}'><b>${q[1]}</b><p>Ta réponse : ${esc(e.a)} ${e.ok?'✓':'✗'}</p>${e.ok?'':`<p>Bonne réponse : ${q[2][0]}</p>`}<p><em>${e.m=='d'?'Quiz du jour':'Partie libre'}, ${e.p} pts</em></p></div>`}).join(''):`<p class='mut ctr'>Aucune partie pour l’instant : réponds à une question pour la voir ici.</p>`);scrollTo(0,0)}
 const ZOOM={heart:[`<svg viewBox='0 0 200 140' role='img' aria-label='Coupe du cœur'><path d='M100 16C60 10 34 34 40 72C46 106 82 126 100 130Z' fill='#4f78b4'/><path d='M100 16C140 10 166 34 160 72C154 106 118 126 100 130Z' fill='#c0504d'/><path d='M100 16V130M42 68H158' stroke='#fff' stroke-opacity='.8' stroke-width='3'/><path d='M104 18C106 2 126 2 128 16' fill='none' stroke='#c0504d' stroke-width='9'/><path d='M96 18C94 4 76 4 74 18' fill='none' stroke='#4f78b4' stroke-width='9'/><g fill='#fff' font-size='10' text-anchor='middle'><text x='70' y='48'>OD</text><text x='130' y='48'>OG</text><text x='70' y='100'>VD</text><text x='130' y='100'>VG</text></g></svg>`,'Coupe du cœur : sang pauvre en oxygène (bleu) à droite, riche en oxygène (rouge) à gauche'],lungs:[`<svg viewBox='0 0 200 140' role='img' aria-label='Alvéoles'><path d='M8 70H48' stroke='#d9a29a' stroke-width='9' stroke-linecap='round'/><g fill='#f2b5ad' stroke='#c9605a' stroke-width='2'><circle cx='72' cy='60' r='24'/><circle cx='120' cy='50' r='22'/><circle cx='100' cy='98' r='24'/><circle cx='152' cy='88' r='20'/></g><g fill='none' stroke='#c0504d' stroke-width='2.5' stroke-dasharray='6 3'><circle cx='72' cy='60' r='29'/><circle cx='120' cy='50' r='27'/><circle cx='100' cy='98' r='29'/><circle cx='152' cy='88' r='25'/></g><text x='60' y='64' font-size='11' fill='#7a2424'>O₂</text><text x='106' y='102' font-size='11' fill='#7a2424'>CO₂</text></svg>`,'Alvéoles entourées de capillaires : l’O₂ entre, le CO₂ sort'],kidney:[`<svg viewBox='0 0 200 140' role='img' aria-label='Coupe du rein'><path d='M80 12C34 12 18 62 36 104C50 132 92 130 94 100C95 84 82 78 82 68C82 54 98 50 102 38C104 22 94 12 80 12Z' fill='#b5533f' stroke='#6e2c20' stroke-width='2'/><path d='M76 34C50 40 46 72 56 94C64 108 80 104 80 92C80 82 70 76 72 66C74 56 84 52 84 44C84 38 80 34 76 34Z' fill='#8a3a2c'/><path d='M96 80C84 78 80 70 84 66C88 62 96 66 100 70C108 74 120 76 140 78C160 80 166 100 172 126' fill='none' stroke='#f3dfa6' stroke-width='7' stroke-linecap='round'/><g fill='var(--fg)' font-size='9'><text x='112' y='24'>Cortex</text><text x='112' y='44'>Médullaire</text><text x='112' y='64'>Bassinet</text><text x='146' y='118'>Urètère</text></g></svg>`,'Coupe d’un rein : cortex, pyramides médullaires et bassinet'],brain:[`<svg viewBox='0 0 200 140' role='img' aria-label='Cerveau'><path d='M26 70C16 30 56 8 100 10C150 8 182 36 174 76C170 98 144 104 128 102L120 126H98L96 102C70 106 34 100 26 70Z' fill='#e6a9a0' stroke='#a65a52' stroke-width='2'/><path d='M128 100C152 94 172 106 166 120C160 132 136 130 126 118Z' fill='#cf8f86' stroke='#a65a52' stroke-width='2'/><path d='M104 102H124L120 128H108Z' fill='#d9a29a' stroke='#a65a52'/><path d='M44 52C56 40 70 48 80 38C92 28 108 40 120 30M40 72C56 64 70 74 86 62C100 52 112 66 128 54M60 90C76 82 90 90 104 80C120 72 136 84 152 72' fill='none' stroke='#a65a52' stroke-width='1.6'/><g fill='#4a1f1a' font-size='9' text-anchor='middle'><text x='46' y='62'>Frontal</text><text x='100' y='24'>Pariétal</text><text x='156' y='62'>Occipital</text><text x='78' y='98'>Temporal</text><text x='148' y='122'>Cervelet</text></g></svg>`,'Vue latérale du cerveau : lobes, cervelet et tronc cérébral'],spine:[`<svg viewBox='0 0 200 140' role='img' aria-label='Neurone'><path d='M30 50L12 30M30 60L8 62M32 70L14 96M24 56L16 44' stroke='#7a6bd0' stroke-width='3' fill='none' stroke-linecap='round'/><circle cx='38' cy='62' r='14' fill='#9b8cf0' stroke='#5a4bb0' stroke-width='2'/><circle cx='38' cy='62' r='5' fill='#5a4bb0'/><path d='M52 62H178' stroke='#7a6bd0' stroke-width='4'/><g fill='#f3e3a0' stroke='#c9a93c'><rect x='62' y='54' width='26' height='16' rx='8'/><rect x='94' y='54' width='26' height='16' rx='8'/><rect x='126' y='54' width='26' height='16' rx='8'/></g><path d='M178 62L192 46M178 62L194 62M178 62L192 80' stroke='#7a6bd0' stroke-width='3' fill='none'/><g fill='var(--fg)' font-size='9'><text x='4' y='118'>Dendrites et corps cellulaire</text><text x='84' y='38'>Axone et myéline</text><text x='128' y='100'>Terminaisons</text></g></svg>`,'Neurone : l’influx saute d’un segment de myéline à l’autre'],skin:[`<svg viewBox='0 0 200 140' role='img' aria-label='Coupe de la peau'><rect x='0' y='8' width='200' height='16' fill='#e8b79a'/><rect x='0' y='24' width='200' height='44' fill='#e39b86'/><rect x='0' y='68' width='200' height='56' fill='#f2d27a'/><path d='M130 2C128 20 130 40 132 76' stroke='#3b2a20' stroke-width='4' fill='none'/><ellipse cx='132' cy='84' rx='8' ry='14' fill='#d8a24a'/><circle cx='60' cy='98' r='10' fill='#c98a5a'/><path d='M60 88C60 60 70 40 66 24' stroke='#c98a5a' stroke-width='3' fill='none'/><g fill='#2b1d16' font-size='9'><text x='4' y='19'>Épiderme</text><text x='4' y='44'>Derme</text><text x='4' y='116'>Hypoderme (graisse)</text></g></svg>`,'Coupe de la peau : épiderme, derme, hypoderme, follicule pileux et gland sudoripare']};
 const zoom=z=>ZOOM[z]?`<figure class='zm'>${ZOOM[z][0]}<figcaption>${ZOOM[z][1]}</figcaption></figure>`:'';
 function freeEnd(){clearInterval(qt);setStage(3);app.innerHTML=`<p class='tag ctr'>Partie libre terminée</p><p class='score ctr'>${M.s}<span class='mut' style='font-size:24px'> points</span></p><p class='mut ctr'>Ces points ne comptent pas pour ton rang : seul le quiz du jour le fait.</p><div class='col' style='margin-top:22px'><button class='big' onclick='free()'><b>Rejouer 5 questions</b></button><button class='big alt' onclick='home()'><b>Retour à l’accueil</b></button></div>`;scrollTo(0,0)}
@@ -262,6 +274,112 @@ const Mi=(d,f)=>P(d,f)+P(d,f).replace('<path',`<path transform='translate(200 0)
 Object.assign(NAME,{eye:'Œil',ear:'Oreille',nose:'Nez',tongue:'Langue',biceps:'Biceps',pecs:'Pectoraux',quad:'Quadriceps',delt:'Deltoïde',calf:'Mollet',skull:'Crâne',humerus:'Humérus',clavicle:'Clavicule',tibia:'Tibia',ribs:'Côtes',pelvis:'Bassin',dna:'ADN et gènes'});
 Object.assign(ORG2,{eye:`<ellipse cx='94' cy='30' rx='5' ry='3'/><ellipse cx='106' cy='30' rx='5' ry='3'/>`,ear:Mi('M85 27C79 27 78 38 85 39',2),nose:P('M100 31L96 41H104Z'),tongue:`<ellipse cx='100' cy='47' rx='6' ry='3'/>`,biceps:Mi('M49 96C45 110 43 126 42 140C48 142 52 138 55 126C55 112 55 102 57 94Z'),pecs:Mi('M98 72C86 68 74 72 67 82C69 96 82 102 98 100Z'),delt:Mi('M65 70C55 70 48 78 49 92C54 96 60 93 64 86Z'),quad:Mi('M74 206C69 230 69 254 73 272L92 272C95 252 96 228 98 208Z'),calf:Mi('M73 280C71 298 73 318 74 340L88 340C91 318 91 298 90 280Z'),skull:`<ellipse cx='100' cy='31' rx='14' ry='17'/>`,humerus:Mi('M60 76C56 100 52 120 50 138',2),clavicle:Mi('M99 63C88 61 78 63 70 69',2),tibia:Mi('M80 282V374',2),ribs:Mi(rib,1),pelvis:Mi('M99 206C90 202 80 198 74 190C70 200 74 214 84 222C90 226 96 224 99 218')});
 Object.assign(ZOOM,{dna:[`<svg viewBox='0 0 200 140' role='img' aria-label='ADN'><g fill='none' stroke-width='5' stroke-linecap='round'><path d='M20 30C60 30 60 110 100 110S140 30 180 30' stroke='#4f78b4'/><path d='M20 110C60 110 60 30 100 30S140 110 180 110' stroke='#c0504d'/></g><g stroke-width='3' stroke-linecap='round'><path d='M30 33V107M90 33V107M110 33V107M170 33V107' stroke='#e0b030'/><path d='M45 48V92M75 48V92M125 48V92M155 48V92' stroke='#3fa56b'/></g><text x='40' y='134' font-size='9' fill='var(--fg)'>Double hélice : A avec T, C avec G</text></svg>`,'Molécule d’ADN : deux brins reliés par des paires de bases'],eye:[`<svg viewBox='0 0 200 140' role='img' aria-label='Coupe de l’œil'><ellipse cx='112' cy='70' rx='60' ry='52' fill='#f4f0ea' stroke='#9a8f86' stroke-width='2'/><path d='M150 28C178 58 178 82 150 112' fill='none' stroke='#d56a5a' stroke-width='6'/><path d='M54 48C30 56 30 84 54 92' fill='#dfeaf5' stroke='#9ab' stroke-width='2'/><path d='M60 40V60M60 80V100' stroke='#7a4a2a' stroke-width='6'/><ellipse cx='72' cy='70' rx='7' ry='15' fill='#cfe3ee' stroke='#7aa'/><path d='M172 72H196' stroke='#e0cf90' stroke-width='8'/><g fill='var(--fg)' font-size='9'><text x='2' y='36'>Cornée</text><text x='46' y='120'>Cristallin</text><text x='56' y='34'>Iris</text><text x='130' y='20'>Rétine</text><text x='130' y='126'>Nerf optique</text></g></svg>`,'Coupe de l’œil : cornée, iris, cristallin, rétine et nerf optique']});
+const enc=()=>btoa(unescape(encodeURIComponent(JSON.stringify({me:ME,tot:tot(),best:st.get('best')||0,nd:st.get('nd')||0,streak:st.get('streak')}))));
+function copyCode(){const e=$('#cd2');e.select();try{navigator.clipboard.writeText(e.value)}catch(x){document.execCommand('copy')}$('#msg').textContent='Code copié ✓'}
+function restore(){try{const o=JSON.parse(decodeURIComponent(escape(atob($('#cd2').value.trim()))));if(!o.me||!o.me.name)throw 0;ME={name:String(o.me.name).slice(0,16)};st.set('me',ME);st.set('tot',+o.tot||0);st.set('best',+o.best||0);st.set('nd',+o.nd||0);if(o.streak)st.set('streak',o.streak);sync();profile();$('#msg').textContent='Profil restauré ✓'}catch(e){$('#msg').textContent='Code invalide.'}}
+async function sync(extra){if(sb&&cloud==1){try{await sb.from('profiles').update({total:tot(),best:st.get('best')||0,nd:st.get('nd')||0,streak:sk(),last_day:(st.get('streak')||{}).last||null}).eq('id',SBU.id);if(extra&&extra.day)await sb.from('daily_scores').insert({user_id:SBU.id,day:extra.day,pts:extra.pts})}catch(e){}}if(!db)return;try{const r=db.collection('scores').doc(uid),s=await r.get(),o=s.exists?s.data():{};await r.set({...o,name:ME.name,total:Math.max(o.total||0,tot()),best:Math.max(o.best||0,st.get('best')||0),nd:Math.max(o.nd||0,st.get('nd')||0),streak:st.get('streak')||o.streak||null,...extra})}catch(e){}}
+function boom(el){const r=el.getBoundingClientRect();for(let i=0;i<28;i++){const p=document.createElement('i'),a=Math.random()*6.28,d=60+Math.random()*130;p.className='cf';p.style.cssText=`left:${r.left+r.width/2}px;top:${r.top+r.height/2}px;--x:${Math.cos(a)*d}px;--y:${Math.sin(a)*d-40}px;background:hsl(${Math.random()*360} 90% 60%)`;document.body.appendChild(p);setTimeout(()=>p.remove(),1100)}}
+
+/* Compte Google + données en ligne (Supabase) */
+const prof=v=>({id:SBU.id,username:v,total:tot(),best:st.get('best')||0,nd:st.get('nd')||0,streak:sk(),last_day:(st.get('streak')||{}).last||null});
+async function loadCloud(u){try{SBU=u;const{data:p}=await sb.from('profiles').select('*').eq('id',u.id).maybeSingle();
+if(p){ME.name=p.username;st.set('me',ME);st.set('tot',Math.max(tot(),p.total));st.set('best',Math.max(st.get('best')||0,p.best));st.set('nd',Math.max(st.get('nd')||0,p.nd));if(p.last_day&&!st.get('streak'))st.set('streak',{n:p.streak,last:p.last_day});cloud=1}
+else{const r=await sb.from('profiles').insert(prof(ME.name));cloud=r.error?2:1}
+const{data:ds}=await sb.from('daily_scores').select('pts').eq('user_id',u.id).eq('day',today()).maybeSingle();if(ds&&!st.get('d_'+today()))st.set('d_'+today(),{s:ds.pts});
+if(cloud==2){profile();$('#msg').textContent='Ce pseudo est déjà pris, choisis-en un autre.'}else if($('.tiles'))home();lb()}catch(e){}}
+function initSB(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+s.onload=()=>{sb=supabase.createClient(SB_URL,SB_KEY);sb.auth.onAuthStateChange((ev,ss)=>{if(ss&&ss.user&&!SBU)loadCloud(ss.user);else if(ev=='INITIAL_SESSION'&&!ss)lb()})};document.head.appendChild(s)}
+const acct=()=>!SB_URL?'':SBU?`<h3>Compte</h3><p class='mut' style='font-size:13px'>Connecté : ${esc(SBU.email||'')}</p>${cloud==2?`<p class='mut' style='font-size:13px'>Choisis ton pseudo ci-dessus pour finaliser ton compte.</p>`:''}<div class='chips' style='margin:0 0 6px'><button class='chip' onclick='logout()'>Se déconnecter</button></div>`:`<h3>Compte</h3><p class='mut' style='font-size:13px'>Connecte-toi avec Google pour sauvegarder ta progression partout et réserver ton pseudo.</p><button class='big' onclick='login()'><b>Se connecter avec Google</b></button>`;
+const login=()=>sb&&sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
+const logout=async()=>{await sb.auth.signOut();SBU=null;cloud=0;profile()};
+
+/* Langue de l’interface : français, ou anglais pour les autres langues */
+const EN=!/^fr/i.test(navigator.language||'fr');
+if(EN){const DT=`le quiz du corps humain|the human body quiz
+Comprends ton corps, une question à la fois.|Understand your body, one question at a time.
+Plus tu réponds vite, plus tu gagnes de points. Du collège à la licence.|The faster you answer, the more points you earn. From middle school to university.
+Quiz du jour|Daily quiz
+Partie libre|Free play
+5 questions, nouvelles à minuit|5 questions, new ones at midnight
+5 questions aléatoires, rejouable à volonté|5 random questions, replay anytime
+👤 Mon profil|👤 My profile
+🕘 Historique|🕘 History
+🕘 Voir mon historique|🕘 View my history
+Historique|History
+Classement du jour|Today’s ranking
+à jouer|to play
+Question suivante|Next question
+Voir mon résultat|See my result
+Retour à l’accueil|Back home
+← Accueil|← Home
+← Profil|← Profile
+Quiz du jour terminé|Daily quiz complete
+Partie libre terminée|Free play complete
+Rejouer 5 questions|Replay 5 questions
+Continue à t’entraîner|Keep practicing
+Prochain quiz dans|Next quiz in
+Ces points ne comptent pas pour ton rang : seul le quiz du jour le fait.|These points do not count toward your rank: only the daily quiz does.
+points, bien joué !|points, well done!
+point : la bonne réponse est ci-dessus|point: the correct answer is shown above
+points cumulés|total points
+meilleur score|best score
+quiz du jour|daily quizzes
+Changer de pseudo|Change username
+Enregistrer|Save
+Les rangs|Ranks
+Le rang ne compte que les points du quiz du jour.|Rank only counts daily quiz points.
+Sauvegarde du profil|Profile backup
+Ton pseudo, ton rang et ta série sont gardés dans ce navigateur. Pour les retrouver sur un autre appareil ou après un nettoyage, copie ce code. Pour restaurer, colle un code dans la case puis appuie sur Restaurer.|Your username, rank and streak are kept in this browser. To get them back on another device or after clearing data, copy this code. To restore, paste a code in the box and press Restore.
+Copier le code|Copy code
+Restaurer depuis un code|Restore from code
+Pseudo enregistré ✓|Username saved ✓
+Le pseudo doit faire au moins 3 caractères.|Username must be at least 3 characters.
+Sauvegarde impossible : ton navigateur bloque le stockage (navigation privée ?). Copie ton code de sauvegarde ci-dessous.|Saving failed: your browser blocks storage (private mode?). Copy your backup code below.
+Code copié ✓|Code copied ✓
+Profil restauré ✓|Profile restored ✓
+Code invalide.|Invalid code.
+Aucune partie pour l’instant : réponds à une question pour la voir ici.|No games yet: answer a question to see it here.
+Classement partagé indisponible ici : seul ton score est affiché.|Shared ranking unavailable here: only your score is shown.
+Compte|Account
+Se connecter avec Google|Sign in with Google
+Se déconnecter|Sign out
+Connecte-toi avec Google pour sauvegarder ta progression partout et réserver ton pseudo.|Sign in with Google to save your progress everywhere and reserve your username.
+Choisis ton pseudo ci-dessus pour finaliser ton compte.|Choose your username above to finish setting up your account.
+Ce pseudo est déjà pris.|This username is already taken.
+Ce pseudo est déjà pris, choisis-en un autre.|This username is already taken, choose another one.
+Cerveau|Brain
+Moelle épinière|Spinal cord
+Poumons|Lungs
+Cœur et circulation|Heart and circulation
+Foie|Liver
+Estomac|Stomach
+Pancréas|Pancreas
+Reins|Kidneys
+Intestins|Intestines
+Fémur et muscles des jambes|Femur and leg muscles
+Peau|Skin
+Vessie|Bladder
+Thyroïde|Thyroid
+Œil|Eye
+Oreille|Ear
+Nez|Nose
+Langue|Tongue
+Pectoraux|Pectorals
+Deltoïde|Deltoid
+Mollet|Calf
+Crâne|Skull
+Humérus|Humerus
+Clavicule|Clavicle
+Côtes|Ribs
+Bassin|Pelvis
+ADN et gènes|DNA and genes`;
+const D=Object.create(null);DT.split('\n').forEach(l=>{const i=l.indexOf('|');D[l.slice(0,i)]=l.slice(i+1)});
+const RN={Étudiant:'Student',Biologiste:'Biologist',Infirmier:'Nurse',Docteur:'Doctor',Médecin:'Physician',Neurochirurgien:'Neurosurgeon',Facile:'Easy',Moyen:'Medium',Difficile:'Hard'};
+const RR=[[/^Terminé : (\d+) points$/,'Completed: $1 points'],[/^(Question \d+) sur 5 \| Score : (\d+)$/,'$1 of 5 | Score: $2'],[/^Partie libre, question (\d+) sur 5 \| Score : (\d+)$/,'Free play, question $1 of 5 | Score: $2'],[/^(Facile|Moyen|Difficile) \(jusqu’à (\d+) pts\)$/,(m,a,b)=>`${RN[a]} (up to ${b} pts)`],[/^(\d+) jours? d’affilée$/,'$1 day streak'],[/ : (\d+) points au total$/,': $1 points in total'],[/^(\d+) \/ (\d+) pts avant (.+)$/,'$1 / $2 pts to $3'],[/^(\d+) pts : rang maximum atteint !$/,'$1 pts: max rank reached!'],[/^(Quiz du jour|Partie libre), (\d+) pts$/,(m,a,b)=>`${a=='Partie libre'?'Free play':'Daily quiz'}, ${b} pts`],[/^Ta réponse : /,'Your answer: '],[/^Bonne réponse : /,'Correct answer: '],[/^Zone du corps : (.+)$/,(m,a)=>'Body area: '+(D[a]||a)],[/^Source : Wikipédia, /,'Source: Wikipedia, '],[/^Connecté : /,'Signed in: '],[/ \(toi\)$/,' (you)'],[/(Étudiant|Biologiste|Infirmier|Docteur|Médecin|Neurochirurgien)/,m=>RN[m]]];
+document.documentElement.lang='en';document.title='Anatomia: the human body quiz';
+const tr=n=>{if(n.nodeType==3){const s=n.nodeValue,k=s.trim();if(!k)return;let v=D[k];if(v===undefined&&k.length<80){v=k;for(const[r,x]of RR)v=v.replace(r,x)}if(v&&v!==k)n.nodeValue=s.replace(k,()=>v)}else n.childNodes.forEach(tr)};
+new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(tr))).observe(document.body,{childList:true,subtree:true});tr(document.body)}
+initSB();
 home();
 </script>
 </body>
