@@ -171,6 +171,11 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));overflow-wrap:a
 @media (min-width:640px){.fig .dg{height:230px}}
 @media (max-width:639px){.o.on,.ping{animation:none}.fig .dg{height:150px}.loc{bottom:26px}}
 .rv .big{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20;margin-top:6px;box-shadow:0 12px 30px -10px rgba(0,0,0,.45)}
+/* responsive */
+html{-webkit-text-size-adjust:100%}body{-webkit-tap-highlight-color:transparent;max-width:100%}.ecg{max-width:100%}
+@media (min-width:1200px){main{max-width:720px}}
+@media (max-height:520px){#doc{height:96vh;opacity:.12}.tile{min-height:120px}.top{padding-top:12px}h1{margin-top:14px}}
+@media (max-width:420px){main{padding-left:14px;padding-right:14px}.tiles{gap:10px}.tile{min-height:150px;padding:14px}.lb li{grid-template-columns:22px 30px 1fr auto;gap:8px;padding:8px 10px}.exp{padding:22px 14px 14px}.big{padding:15px 16px}.top{padding-top:18px}}
 </style>
 </head>
 <body>
@@ -519,6 +524,7 @@ document.addEventListener('pointermove',e=>{const t=e.target.closest&&e.target.c
 let TRN=null,TRT=0;const TRC={},LANG=(navigator.language||'fr').slice(0,2);
 async function initTR(){if(!EN||!self.Translator)return;try{const o={sourceLanguage:'fr',targetLanguage:'en'};if((await Translator.availability(o))=='unavailable')return;TRN=await Translator.create(o)}catch(e){}}
 async function trq(q){if(!TRN)return q;const k=Q.indexOf(q);if(TRC[k])return TRC[k];const t=async x=>{try{return await TRN.translate(x)}catch(e){return x}};return TRC[k]=[q[0],await t(q[1]),await Promise.all(q[2].map(t)),q[3],await t(q[4]),q[5]]}
+(()=>{const p=document.querySelector('.ecg .p');if(!p||!p.animate||!p.getTotalLength)return;try{const L=p.getTotalLength();p.removeAttribute('pathLength');p.style.animation='none';p.style.strokeDasharray=`${L*.22} ${L*1.5}`;p.animate([{strokeDashoffset:L*.22},{strokeDashoffset:-L*1.1}],{duration:2600,iterations:Infinity,easing:'linear'})}catch(e){}})();
 initSB();
 home();
 </script>
