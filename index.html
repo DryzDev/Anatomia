@@ -149,6 +149,20 @@ h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);
 @media (prefers-color-scheme:dark){#doc{filter:brightness(.82)}}
 /* corps de fond retiré (le dessin reste chargé, invisible, pour les schémas) */
 #bg{position:absolute!important;top:0!important;left:0!important;width:0!important;height:0!important;transform:none!important;opacity:0!important;overflow:hidden;pointer-events:none}
+
+/* responsive + correctif du bouton « Question suivante » */
+main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));overflow-wrap:anywhere}
+.rv{display:flex;flex-direction:column;gap:14px}.rv>*{margin:0;animation:fo .5s both}@keyframes fo{from{opacity:0}}
+.rv .big{position:relative;z-index:2;flex:none}
+#ex{scroll-margin-top:12px}
+.exp{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin:0;align-items:start}
+.exp>div{min-width:0}
+.fig{overflow:hidden;width:100%;max-width:220px;margin:0;justify-self:center}
+.zm svg{aspect-ratio:200/140;height:auto}
+@media (min-width:640px){.exp{grid-template-columns:200px minmax(0,1fr)}.fig{justify-self:start;width:200px}}
+@media (max-width:359px){.tiles{grid-template-columns:1fr}}
+.chip{min-height:44px}.st b{font-size:clamp(17px,5vw,22px)}
+@media (hover:none){.tile:hover,.ans:hover:not(:disabled),.big:hover{transform:none}}
 </style>
 </head>
 <body>
@@ -353,7 +367,7 @@ A.forEach(b=>b.disabled=true);if(ok)M.s+=p;hs({g:M.g,m:M.mode,q:Q.indexOf(q),a:M
 const fin=()=>{A.forEach((b,i)=>{b.classList.remove("bad");b.classList.add(i==c?"good":"out")});$("#tm").classList.add("off");if(ok)boom(A[c]);
 setTimeout(()=>{$("#ex").innerHTML=`<div class="rv"><div class="gain${ok?"":" zero"}"><span id="gn">+0</span><b>${ok?"points, bien joué !":"point : la bonne réponse est ci-dessus"}</b></div>
 <div class="exp">${figure(q[3])}<div><p class="tag">Zone du corps : ${NAME[q[3]]}</p><p>${M.qx[4]}</p>${zoom(q[3])}<a class="src" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/${q[5]}">Source : Wikipédia, ${decodeURIComponent(q[5]).replace(/_/g," ")} ↗</a></div></div>
-<button class="big" onclick="nxt()"><b>${last?"Voir mon résultat":"Question suivante"}</b></button></div>`;cnt($("#gn"),ok?p:0);$("#ex").scrollIntoView({behavior:"smooth",block:"nearest"})},450)};
+<button class="big" onclick="nxt()"><b>${last?"Voir mon résultat":"Question suivante"}</b></button></div>`;cnt($("#gn"),ok?p:0);$("#ex").scrollIntoView({behavior:"smooth",block:"start"})},450)};
 if(ok)fin();else{A[j].classList.add("bad");setTimeout(fin,650)}}
 function nxt(){if(M.mode=="f"){if(M.n>=4)return freeEnd();M.n++;M.q=draw();return show()}if(M.i<4){M.i++;return show()}
 const k=today(),d={s:M.s},s=st.get("streak")||{n:0,last:""};
