@@ -163,6 +163,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));overflow-wrap:a
 @media (max-width:359px){.tiles{grid-template-columns:1fr}}
 .chip{min-height:44px}.st b{font-size:clamp(17px,5vw,22px)}
 @media (hover:none){.tile:hover,.ans:hover:not(:disabled),.big:hover{transform:none}}
+/* schéma : zone fixe, isolée et réduite sur téléphone ; bouton toujours cliquable */
+.fig{contain:paint;isolation:isolate;position:relative;z-index:0;max-width:200px;padding:10px 8px 8px}
+.fig .dg{height:170px;overflow:hidden}
+.exp{position:relative;z-index:0;isolation:isolate}
+.zm svg{max-width:220px}
+@media (min-width:640px){.fig .dg{height:230px}}
+@media (max-width:639px){.o.on,.ping{animation:none}.fig .dg{height:150px}.loc{bottom:26px}}
+.rv .big{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20;margin-top:6px;box-shadow:0 12px 30px -10px rgba(0,0,0,.45)}
 </style>
 </head>
 <body>
